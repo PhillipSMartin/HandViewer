@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This method takes as input a dictionary describing a deal in the following format:
+The build method of this module takes as input a dictionary describing a deal in the following format:
     {
         "Board number": <integer>
         "Dealer": <"North", "South", "East", or "West" >
@@ -31,7 +31,6 @@ This method takes as input a dictionary describing a deal in the following forma
     if it contains a number, the deal is shifted clockwise that number of positions (and directions are reassigned before formatting)
 """
 from typing import Dict, List
-import sys
 import globals
 import re
 
@@ -59,47 +58,47 @@ def rotateDeal(deal: dict, n: int):
         seat["Direction"] = shift(seat["Direction"], n)
     return deal
     
-def buildSuit(suit: str):
+def formatSuit(suit: str):
     # input: 'AJT6'
     # output: ' A J 10 6'
     return ' '.join(suit).replace('T','10') or ' --'
 
-def buildHand(hand: Dict[str, str], withBreaks: bool = True):
+def formatHand(hand: Dict[str, str], withBreaks: bool = True):
     # convert dictionary of holdings by suit into an html string displaying the hand
     # input:  {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}
     # output: 
-    #    '&#9824; 10 5</br>
-    #     <span style="color: rgb(192, 22, 22);">&#9829;</span> A J 7</br>
-    #     <span style="color: rgb(192, 22, 22);">&#9830;</span> K Q J 2</br>
-    #     &#9827; A J 10 6</br>'
+    #    '&#9824; 10 5<br />
+    #     <span style="color: rgb(192, 22, 22);">&#9829;</span> A J 7<br />
+    #     <span style="color: rgb(192, 22, 22);">&#9830;</span> K Q J 2<br />
+    #     &#9827; A J 10 6<br />'
 
-    br = '</br>\n' if withBreaks else ' '
-    suitStr = [pip + ' ' + buildSuit(hand[suit]) for pip, suit in zip(pips.values(), globals.suits)]
+    br = '<br />\n' if withBreaks else ' '
+    suitStr = [pip + ' ' + formatSuit(hand[suit]) for pip, suit in zip(pips.values(), globals.suits)]
     return (br.join(suitStr) + br)
 
-def buildHandDiagram(handInfo: dict):
+def formatHandDiagram(handInfo: dict):
     # convert dictionary of hand info into an html string displaying the direction, player, and hand itself
     # input:  { "Player": "Phillip", "Direction": "North", "Hand": ...}
     # output: 
-    #   NORTH</br>
-    #   <i>Phillip</i></br>
-    #   ♠ A Q 10 7 6</br>
-    #   <span style="color: #c01616;">♥</span> A J 7 5 4</br>
-    #   <span style="color: #c01616;">♦</span> 10 3</br>
-    #   ♣ 6</br>
+    #   NORTH<br />
+    #   <i>Phillip</i><br />
+    #   ♠ A Q 10 7 6<br />
+    #   <span style="color: #c01616;">♥</span> A J 7 5 4<br />
+    #   <span style="color: #c01616;">♦</span> 10 3<br />
+    #   ♣ 6<br />
     # 
     
-    return  f'{handInfo["Direction"].upper()}</br>\n' + \
-            f'<i>{handInfo["Player"]}</i></br>\n' + \
-            f'{buildHand(handInfo["Hand"])}\n'
+    return  f'{handInfo["Direction"].upper()}<br />\n' + \
+            f'<i>{handInfo["Player"]}</i><br />\n' + \
+            f'{formatHand(handInfo["Hand"])}\n'
     
     
-def buildHandDiagrams(hands: dict, withBreaks: bool = True):
+def formatHandDiagrams(hands: dict, withBreaks: bool = True):
     # convert list of hands into a dictionary of hand diagrams, keyed by direction
      
-    return dict([(hand['Direction'], buildHandDiagram(hand)) for hand in hands])
+    return dict([(hand['Direction'], formatHandDiagram(hand)) for hand in hands])
 
-def buildCall(call: str):
+def formatCall(call: str):
     # convert abbreviation into a displayable html string
     # input: '1C'
     # output: '1 &#9827;</span>'
@@ -108,7 +107,7 @@ def buildCall(call: str):
             call = call.replace(suit, ' ' + pip)
     return call.replace('P', 'Pass').replace('D', 'Double').replace('R', 'Redouble').replace('N', ' NT')
 
-def buildAuction(auction: List[str], dealer: str):
+def formatAuctionCalls(auction: List[str], dealer: str):
     # convert list of call  abbreviations into a  list of displayable calls with the first call being West
     # input: ['1C', 'Pass', '2C', 'Pass', '2S', 'Pass', '3 NT', 'Pass', 'Pass', 'Pass'], North dealer
     # output: [' ', '1 &#9827;', 'Pass', '2 &#9827;',
@@ -116,7 +115,7 @@ def buildAuction(auction: List[str], dealer: str):
     #     '(All pass)']
         
     # translate abbreviations to full calls
-    callList = [buildCall(call) for call in auction]
+    callList = [formatCall(call) for call in auction]
     
     # replace three or four final passes with (All pass)
     if len(callList) > 3:
@@ -193,7 +192,7 @@ def formatAuction(auction: List[str]):
 
 def buildAuctionTable(deal: dict, width: int = 300):
     header = formatAuctionHeader(deal)
-    auction = formatAuction((buildAuction(deal["Auction"], deal["Dealer"])))
+    auction = formatAuction((formatAuctionCalls(deal["Auction"], deal["Dealer"])))
     return f'<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: {width}px;">\n<tbody>\n' + \
         header + \
         auction + \
@@ -202,26 +201,31 @@ def buildAuctionTable(deal: dict, width: int = 300):
 def buildHandTable(deal: dict, options: str):
     # build html to display deal
     # options is a string containing a letter for each hand to display (N, S, E, W) and 'A' if the auction is to be displayed
-    hands = buildHandDiagrams(deal["Seats"])
+    hands = formatHandDiagrams(deal["Seats"])
     return '<div align="center"><table><tbody>\n' + \
             '   <tr>\n'  + \
-            '      <td align="left" width="125"><br></td>\n' + \
-            '      <td align="left" width="125">' + (hands["North"] if 'N' in options else '') + '<br></td>\n' + \
-            '      <td align="left" width="125"><br></td>\n' + \
+            '      <td align="left" width="125"><br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["North"] if 'N' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125"><br /></td>\n' + \
             '   </tr>\n' + \
             '   <tr>\n'  + \
-            '      <td align="left" width="125">' + (hands["West"] if 'W' in options else '') + '<br></td>\n' + \
-            '      <td align="left" width="125"><br></td>\n' + \
-            '      <td align="left" width="125">' + (hands["East"] if 'E' in options else '') + '<br></td>\n' + \
+            '      <td align="left" width="125">' + (hands["West"] if 'W' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125"><br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["East"] if 'E' in options else '') + '<br /></td>\n' + \
             '   </tr>\n' + \
             '   <tr>\n'  + \
-            '      <td align="left" width="125"><br></td>\n' + \
-            '      <td align="left" width="125">' + (hands["South"] if 'S' in options else '') + '<br></td>\n' + \
-            '      <td align="left" width="125"><br></td>\n' + \
+            '      <td align="left" width="125"><br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["South"] if 'S' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125"><br /></td>\n' + \
             '   </tr>\n' + \
-            '</tbody></table></div>'
+            '</tbody></table></div>\n'
+            
+def buildSingleHand(hand: str):
+    return f'<TABLE width="250" border="0" cellspacing="0" cellpadding="0" align="center"><TR><TD WIDTH="100%" Align="center">{hand}</TR></TABLE>'
+        
     
-def main(deal: dict, options: str):
+def build(deal: dict, options: str):
+    
     html = ''
     
     # rotate deal if necessary
@@ -234,11 +238,11 @@ def main(deal: dict, options: str):
     if len(seatsToShow) == 1:
         for seat in deal['Seats']:
             if seat['Direction'] == seats[seatsToShow[0]]:
-                 html += buildHand(seat['Hand'], False)
+                 html = buildSingleHand(formatHand(seat['Hand'], False))
                  break
     
-    else:
-        html += buildHandTable(deal, options)
+    elif len(seatsToShow) > 1:
+        html = buildHandTable(deal, options)
         
     # if specified, add auction
     if 'A' in options:
@@ -248,12 +252,11 @@ def main(deal: dict, options: str):
 
     
 
-if len(sys.argv) > 2:
-    main(sys.argv[1], sys.argv[2])
-else:
-    # for testing
+# for testing
+if __name__ == '__main__' :
     sampleDeal = {'Board number': 1, 'Dealer': 'East', 'Auction': ['1C', 'P', '2C', 'P', '2S', 'P', '3N', 'P', 'P', 'P'], 'Seats': [{'Player': 'PSMartin', 'Direction': 'South', 'Hand': {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}}, {'Player': 'Robot', 'Direction': 'West', 'Hand': {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}}, {'Player': 'Robot', 'Direction': 'North', 'Hand': {'Spades': 'AK7', 'Hearts': 'T32', 'Diamonds': '98', 'Clubs': 'KQ852'}}, {'Player': 'Robot', 'Direction': 'East', 'Hand': {'Spades': 'QJ8', 'Hearts': '865', 'Diamonds': 'A7643', 'Clubs': '94'}}]}
-    result = main(sampleDeal, 'NE3A')
+    result = build(sampleDeal, 'NE3A')
     print (result)
+
  
 
