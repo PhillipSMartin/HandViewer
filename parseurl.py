@@ -27,36 +27,36 @@ import globals
 
 globals.initialize()
     
-def splitSuits(hand: str):
+def splitSuits(hand: str) -> list:
     # input 'S96432HKQ94DT5C73' (possibly with an integer preceding the S)
     # output ['96432', 'KQ9', 'T5', '73']
     return re.split('[SHDC]', hand)[1:]
 
-def buildHand(suitList: List[str]):
+def buildHand(suitList: List[str]) -> dict:
     # input ['96432', 'KQ9', 'T5', '73']
     # output {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}
     assert len(suitList) == 4, "Invalid input to buildHand method"
     return dict(zip(globals.suits, suitList))
 
-def extractBoardNumber(url: str):
+def extractBoardNumber(url: str) -> int:
     boardMatch = re.findall(".*?Board(.*?)\|", url)
     assert len(boardMatch) > 0, "No board number"
     return int(boardMatch[0][-2:])
 
-def extractDealer(hand: str):
+def extractDealer(hand: str) -> int:
     # first char of hand is dealer: 1 for West, 2 for North, etc.
     #   subtract 1 to make it an index into globals.directions
     return int(hand[0]) - 1
  
-def extractHands(url: str):
+def extractHands(url: str) -> list:
     # extract string containing each hand, separated by commas
     # build a list with one item for each hand
     handsMatch = re.findall(".*?\|md\|(.*?)\|", url)
     assert len(handsMatch) > 0, "No hands"
     return handsMatch[0].split(',')
  
-def extractPlayers(url: str):    
-     # extract string containing players' names
+def extractPlayers(url: str) -> list:    
+    # extract string containing players' names
     # build a list with one item for each player
     # players whose names start with ~ are robots
     playersMatch = re.findall(".*?\|pn\|(.*?)\|", url)
@@ -66,16 +66,16 @@ def extractPlayers(url: str):
         if players[i][0] == '~':
             players[i] = 'Robot'
         elif players[i] == 'PSMartin':
-            players[i] == 'Phillip'
+            players[i] = 'Phillip'
     return players
 
-def extractAuction(url: str):
+def extractAuction(url: str) -> list:
     # build a list of calls, e.g. ['1C', 'P', '2C', 'P', '2S', 'P', '3N', 'P', 'P', 'P']
     auction = re.findall('mb\|([1-7SHDCNRP]+)[!\|]', url)
     assert len(auction) > 0, "No auction"
     return auction
 
-def parse(url: str):
+def parse(url: str) -> dict:
     #print('***entering parseurl***')
     #print(f'url:{url}')
     

@@ -46,24 +46,24 @@ seats = { 'S': 'South',
         'E': 'East'
         }
 
-def shift(direction: str, n: int):
+def shift(direction: str, n: int) -> str:
     # returns direction n places clockwise from specified direction
     # shift("South", 1) returns "West"
     return globals.directions[(globals.directions.index(direction) + n) % 4]
 
-def rotateDeal(deal: dict, n: int):
+def rotateDeal(deal: dict, n: int) -> dict:
     # rotates deal n seats counter-clockwise
     deal["Dealer"] = shift(deal["Dealer"], n)
     for seat in deal['Seats']:
         seat["Direction"] = shift(seat["Direction"], n)
     return deal
     
-def formatSuit(suit: str):
+def formatSuit(suit: str) -> str:
     # input: 'AJT6'
     # output: ' A J 10 6'
     return ' '.join(suit).replace('T','10') or ' --'
 
-def formatHand(hand: Dict[str, str], withBreaks: bool = True):
+def formatHand(hand: Dict[str, str], withBreaks: bool = True) -> str:
     # convert dictionary of holdings by suit into an html string displaying the hand
     # input:  {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}
     # output: 
@@ -76,7 +76,7 @@ def formatHand(hand: Dict[str, str], withBreaks: bool = True):
     suitStr = [pip + ' ' + formatSuit(hand[suit]) for pip, suit in zip(pips.values(), globals.suits)]
     return (br.join(suitStr) + br)
 
-def formatHandDiagram(handInfo: dict):
+def formatHandDiagram(handInfo: dict) -> str:
     # convert dictionary of hand info into an html string displaying the direction, player, and hand itself
     # input:  { "Player": "Phillip", "Direction": "North", "Hand": ...}
     # output: 
@@ -93,12 +93,12 @@ def formatHandDiagram(handInfo: dict):
             f'{formatHand(handInfo["Hand"])}\n'
     
     
-def formatHandDiagrams(hands: dict, withBreaks: bool = True):
+def formatHandDiagrams(hands: dict, withBreaks: bool = True) -> dict:
     # convert list of hands into a dictionary of hand diagrams, keyed by direction
      
     return dict([(hand['Direction'], formatHandDiagram(hand)) for hand in hands])
 
-def formatCall(call: str):
+def formatCall(call: str) -> str:
     # convert abbreviation into a displayable html string
     # input: '1C'
     # output: '1 &#9827;</span>'
@@ -107,7 +107,7 @@ def formatCall(call: str):
             call = call.replace(suit, ' ' + pip)
     return call.replace('P', 'Pass').replace('D', 'Double').replace('R', 'Redouble').replace('N', ' NT')
 
-def formatAuctionCalls(auction: List[str], dealer: str):
+def formatAuctionCalls(auction: List[str], dealer: str) -> list:
     # convert list of call  abbreviations into a  list of displayable calls with the first call being West
     # input: ['1C', 'Pass', '2C', 'Pass', '2S', 'Pass', '3 NT', 'Pass', 'Pass', 'Pass'], North dealer
     # output: [' ', '1 &#9827;', 'Pass', '2 &#9827;',
@@ -129,7 +129,7 @@ def formatAuctionCalls(auction: List[str], dealer: str):
     newAuction.extend(callList)
     return newAuction
 
-def formatAuctionHeader(deal: dict):
+def formatAuctionHeader(deal: dict) -> str:
     # contruct auction heading from list of players (West first)
     # input: each player's name can be found in deal[direction]["PLayer"]
     # output: 
@@ -155,7 +155,7 @@ def formatAuctionHeader(deal: dict):
     return auctionHeader + '</tr>\n'
     
     
-def formatAuction(auction: List[str]):
+def formatAuction(auction: List[str]) -> str:
     # take output of buildAuction and format it into html table rows
     # output: 
     # <tr>
@@ -190,7 +190,7 @@ def formatAuction(auction: List[str]):
             newAuction += '</tr>\n'
     return newAuction
 
-def buildAuctionTable(deal: dict, width: int = 300):
+def buildAuctionTable(deal: dict, width: int = 300) -> str:
     header = formatAuctionHeader(deal)
     auction = formatAuction((formatAuctionCalls(deal["Auction"], deal["Dealer"])))
     return f'<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: {width}px;">\n<tbody>\n' + \
@@ -198,7 +198,7 @@ def buildAuctionTable(deal: dict, width: int = 300):
         auction + \
         '</tbody></table>'
  
-def buildHandTable(deal: dict, options: str):
+def buildHandTable(deal: dict, options: str) -> str:
     # build html to display deal
     # options is a string containing a letter for each hand to display (N, S, E, W) and 'A' if the auction is to be displayed
     hands = formatHandDiagrams(deal["Seats"])
@@ -220,11 +220,11 @@ def buildHandTable(deal: dict, options: str):
             '   </tr>\n' + \
             '</tbody></table></div>\n'
             
-def buildSingleHand(hand: str):
+def buildSingleHand(hand: str) -> str:
     return f'<TABLE width="250" border="0" cellspacing="0" cellpadding="0" align="center"><TR><TD WIDTH="100%" Align="center">{hand}</TR></TABLE>'
         
     
-def build(deal: dict, options: str):
+def build(deal: dict, options: str) -> str:
     
     html = ''
     
