@@ -40,11 +40,7 @@ pips = { 'S': '&#9824;',
         'D': '<span style="color: rgb(192, 22, 22);">&#9830;</span>',
         'C': '&#9827;'
         }
-seats = { 'S': 'South', 
-        'W': 'West',
-        'N': 'North',
-        'E': 'East'
-        }
+
 
 def shift(direction: str, n: int) -> str:
     # returns direction n places clockwise from specified direction
@@ -88,9 +84,12 @@ def formatHandDiagram(handInfo: dict) -> str:
     #   ♣ 6<br />
     # 
     
-    return  f'{handInfo["Direction"].upper()}<br />\n' + \
-            f'<i>{handInfo["Player"]}</i><br />\n' + \
-            f'{formatHand(handInfo["Hand"])}\n'
+    diagram =  f'{handInfo["Direction"].upper()}<br />\n'
+    if "Player" in handInfo:
+        diagram += f'<i>{handInfo["Player"]}</i><br />\n'
+    if "Hand" in handInfo:
+        diagram += f'{formatHand(handInfo["Hand"])}\n'
+    return diagram
     
     
 def formatHandDiagrams(hands: dict, withBreaks: bool = True) -> dict:
@@ -125,7 +124,7 @@ def formatAuctionCalls(auction: List[str], dealer: str) -> list:
             del callList[-1]
          
     # determine how many empty cells should begin the auction
-    newAuction = ([' '] * ((globals.directions.index(dealer) - 1) % 4))
+    newAuction = ([' '] * ((globals.directions.index(dealer)) % 4))
     newAuction.extend(callList)
     return newAuction
 
@@ -145,7 +144,7 @@ def formatAuctionHeader(deal: dict) -> str:
     #    <td align="left" width="25%"><i>Robot</i></td>
     #    <td align="left" width="25%"><i>Phillip</i></td>
     # </tr>
-    players = dict([(seat['Direction'], seat['Player']) for seat in deal['Seats']])
+    players = dict([(seat['Direction'], seat.get('Player', '')) for seat in deal['Seats']])
     auctionHeader = '<tr>\n'
     for direction in globals.directions:
         auctionHeader += f'   <td align="direction in globals.directions:left" width="25%"><b>{direction}</b></td>\n'
@@ -156,7 +155,7 @@ def formatAuctionHeader(deal: dict) -> str:
     
     
 def formatAuction(auction: List[str]) -> str:
-    # take output of buildAuction and format it into html table rows
+    # take output of formatAuctionCalls and format it into html table rows
     # output: 
     # <tr>
     #    <td align="left" width="25%"> <br /></td>
@@ -237,7 +236,7 @@ def build(deal: dict, options: str) -> str:
     seatsToShow = re.findall('[WNES]', options)
     if len(seatsToShow) == 1:
         for seat in deal['Seats']:
-            if seat['Direction'] == seats[seatsToShow[0]]:
+            if seat['Direction'] == globals.seats[seatsToShow[0]]:
                  html = buildSingleHand(formatHand(seat['Hand'], False))
                  break
     
@@ -254,8 +253,25 @@ def build(deal: dict, options: str) -> str:
 
 # for testing
 if __name__ == '__main__' :
+    """
     sampleDeal = {'Board number': 1, 'Dealer': 'East', 'Auction': ['1C', 'P', '2C', 'P', '2S', 'P', '3N', 'P', 'P', 'P'], 'Seats': [{'Player': 'PSMartin', 'Direction': 'South', 'Hand': {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}}, {'Player': 'Robot', 'Direction': 'West', 'Hand': {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}}, {'Player': 'Robot', 'Direction': 'North', 'Hand': {'Spades': 'AK7', 'Hearts': 'T32', 'Diamonds': '98', 'Clubs': 'KQ852'}}, {'Player': 'Robot', 'Direction': 'East', 'Hand': {'Spades': 'QJ8', 'Hearts': '865', 'Diamonds': 'A7643', 'Clubs': '94'}}]}
     result = build(sampleDeal, 'NE3A')
+    """
+    sampleDeal = {'Dealer': 'West',
+ 'Seats': [{'Direction': 'West'},
+  {'Direction': 'North',
+   'Hand': {'Spades': 'K7542',
+    'Hearts': 'K752',
+    'Diamonds': 'J6',
+    'Clubs': 'Q4'}},
+  {'Direction': 'East',
+   'Hand': {'Spades': 'A6',
+    'Hearts': 'AT6',
+    'Diamonds': 'QT842',
+    'Clubs': 'AT9'}},
+  {'Direction': 'South'}],
+ 'Auction': ['P', 'P', '1D', '1S', 'D', '3S']}
+    result = build(sampleDeal, 'NEA')
     print (result)
 
  

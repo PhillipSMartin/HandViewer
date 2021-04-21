@@ -1,0 +1,1 @@
+{"Dealer": "West", "Seats": [{"Direction": "West"}, {"Direction": "North", "Hand": {"Spades": "K7542", "Hearts": "K752", "Diamonds": "J6", "Clubs": "Q4"}}, {"Direction": "East", "Hand": {"Spades": "A6", "Hearts": "AT6", "Diamonds": "QT842", "Clubs": "AT9"}}, {"Direction": "South"}], "Auction": ["P", "P", "1D", "1S", "D", "3S"]}

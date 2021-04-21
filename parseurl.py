@@ -22,7 +22,6 @@ The parse method of this module takes a BBO handviewer url, parses it, and retur
 
 #import sys
 import re
-from typing import List
 import globals
 
 globals.initialize()
@@ -31,12 +30,6 @@ def splitSuits(hand: str) -> list:
     # input 'S96432HKQ94DT5C73' (possibly with an integer preceding the S)
     # output ['96432', 'KQ9', 'T5', '73']
     return re.split('[SHDC]', hand)[1:]
-
-def buildHand(suitList: List[str]) -> dict:
-    # input ['96432', 'KQ9', 'T5', '73']
-    # output {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}
-    assert len(suitList) == 4, "Invalid input to buildHand method"
-    return dict(zip(globals.suits, suitList))
 
 def extractBoardNumber(url: str) -> int:
     boardMatch = re.findall(".*?Board(.*?)\|", url)
@@ -88,7 +81,7 @@ def parse(url: str) -> dict:
     # combine players names, directions, and hands into a list of tuples
     # example of an item in the list: ('PSMartin', 'South', {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'})
     directionsSouthFirst = globals.directions[globals.directions.index('South'):] + globals.directions[:globals.directions.index('South')]
-    handsZip = zip(players, directionsSouthFirst, [buildHand(splitSuits(hand)) for hand in hands])
+    handsZip = zip(players, directionsSouthFirst, [globals.buildHand(splitSuits(hand)) for hand in hands])
     
     # convert list of tuples into a list of dictionaries
     handsList = [dict(zip(["Player", "Direction", "Hand"], item)) for item in handsZip]
