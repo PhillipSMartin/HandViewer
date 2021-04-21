@@ -253,7 +253,7 @@ def build(deal: dict, options: str) -> str:
 
 # for testing
 if __name__ == '__main__' :
-    """
+   
     sampleDeal = {'Board number': 1, 'Dealer': 'East', 'Auction': ['1C', 'P', '2C', 'P', '2S', 'P', '3N', 'P', 'P', 'P'], 'Seats': [{'Player': 'PSMartin', 'Direction': 'South', 'Hand': {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}}, {'Player': 'Robot', 'Direction': 'West', 'Hand': {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}}, {'Player': 'Robot', 'Direction': 'North', 'Hand': {'Spades': 'AK7', 'Hearts': 'T32', 'Diamonds': '98', 'Clubs': 'KQ852'}}, {'Player': 'Robot', 'Direction': 'East', 'Hand': {'Spades': 'QJ8', 'Hearts': '865', 'Diamonds': 'A7643', 'Clubs': '94'}}]}
     result = build(sampleDeal, 'NE3A')
     """
@@ -272,6 +272,7 @@ if __name__ == '__main__' :
   {'Direction': 'South'}],
  'Auction': ['P', 'P', '1D', '1S', 'D', '3S']}
     result = build(sampleDeal, 'NEA')
+     """
     print (result)
 
  

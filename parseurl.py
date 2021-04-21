@@ -37,9 +37,9 @@ def extractBoardNumber(url: str) -> int:
     return int(boardMatch[0][-2:])
 
 def extractDealer(hand: str) -> int:
-    # first char of hand is dealer: 1 for West, 2 for North, etc.
-    #   subtract 1 to make it an index into globals.directions
-    return int(hand[0]) - 1
+    # first char of hand is dealer: 1 for South, 2 for West, etc.
+    #   subtract 2 to make it an index into globals.directions
+    return (int(hand[0]) - 2) % 4
  
 def extractHands(url: str) -> list:
     # extract string containing each hand, separated by commas
