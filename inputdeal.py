@@ -34,6 +34,7 @@ def inputHands() -> List[dict]:
         if len(name) > 0:
             seats[-1]["Player"] = name
         if len(hand) > 0:
+            hand = (hand.upper()).replace('X', 'x')
             seats[-1]["Hand"] = globals.buildHand(hand.upper().split(','))
     return seats
 

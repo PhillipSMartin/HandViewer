@@ -57,7 +57,7 @@ def rotateDeal(deal: dict, n: int) -> dict:
 def formatSuit(suit: str) -> str:
     # input: 'AJT6'
     # output: ' A J 10 6'
-    return ' '.join(suit).replace('T','10') or ' --'
+    return ' '.join(suit).replace('T','10') or '--'
 
 def formatHand(hand: Dict[str, str], withBreaks: bool = True) -> str:
     # convert dictionary of holdings by suit into an html string displaying the hand
@@ -68,9 +68,9 @@ def formatHand(hand: Dict[str, str], withBreaks: bool = True) -> str:
     #     <span style="color: rgb(192, 22, 22);">&#9830;</span> K Q J 2<br />
     #     &#9827; A J 10 6<br />'
 
-    br = '<br />\n' if withBreaks else ' '
+    br = '<br />\n' if withBreaks else '&nbsp;&nbsp;'
     suitStr = [pip + ' ' + formatSuit(hand[suit]) for pip, suit in zip(pips.values(), globals.suits)]
-    return (br.join(suitStr) + br)
+    return br.join(suitStr) + br
 
 def formatHandDiagram(handInfo: dict) -> str:
     # convert dictionary of hand info into an html string displaying the direction, player, and hand itself
@@ -220,7 +220,7 @@ def buildHandTable(deal: dict, options: str) -> str:
             '</tbody></table></div>\n'
             
 def buildSingleHand(hand: str) -> str:
-    return f'<TABLE width="250" border="0" cellspacing="0" cellpadding="0" align="center"><TR><TD WIDTH="100%" Align="center">{hand}</TR></TABLE>'
+    return f'<TABLE width="300" border="0" cellspacing="0" cellpadding="0" align="center"><TR><TD WIDTH="100%" Align="center">{hand}</TR></TABLE>'
         
     
 def build(deal: dict, options: str) -> str:
@@ -254,12 +254,12 @@ def build(deal: dict, options: str) -> str:
 # for testing
 if __name__ == '__main__' :
    
-    sampleDeal = {'Board number': 1, 'Dealer': 'East', 'Auction': ['1C', 'P', '2C', 'P', '2S', 'P', '3N', 'P', 'P', 'P'], 'Seats': [{'Player': 'PSMartin', 'Direction': 'South', 'Hand': {'Spades': 'T5', 'Hearts': 'AJ7', 'Diamonds': 'KQJ2', 'Clubs': 'AJT6'}}, {'Player': 'Robot', 'Direction': 'West', 'Hand': {'Spades': '96432', 'Hearts': 'KQ94', 'Diamonds': 'T5', 'Clubs': '73'}}, {'Player': 'Robot', 'Direction': 'North', 'Hand': {'Spades': 'AK7', 'Hearts': 'T32', 'Diamonds': '98', 'Clubs': 'KQ852'}}, {'Player': 'Robot', 'Direction': 'East', 'Hand': {'Spades': 'QJ8', 'Hearts': '865', 'Diamonds': 'A7643', 'Clubs': '94'}}]}
-    result = build(sampleDeal, 'NE3A')
+    sampleDeal = {"Seats": [{"Direction": "West", "Hand": {"Spades": "K6", "Hearts": "8643", "Diamonds": "Q954", "Clubs": "Q96"}}, {"Direction": "North"}, {"Direction": "East", "Hand": {"Spades": "AJT743", "Hearts": "", "Diamonds": "7", "Clubs": "AKJT84"}}, {"Direction": "South"}], "Auction": [""]}
+    result = build(sampleDeal, 'EW')
     """
     sampleDeal = {'Dealer': 'West',
  'Seats': [{'Direction': 'West'},
-  {'Direction': 'North',
+  {'Direction': 'North', 
    'Hand': {'Spades': 'K7542',
     'Hearts': 'K752',
     'Diamonds': 'J6',
