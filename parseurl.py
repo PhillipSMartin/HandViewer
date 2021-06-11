@@ -33,8 +33,10 @@ def splitSuits(hand: str) -> list:
 
 def extractBoardNumber(url: str) -> int:
     boardMatch = re.findall(".*?Board(.*?)\|", url)
-    assert len(boardMatch) > 0, "No board number"
-    return int(boardMatch[0][-2:])
+    if len(boardMatch) == 0:
+        return 0
+    else:
+        return int(boardMatch[0][-2:])
 
 def extractDealer(hand: str) -> int:
     # first char of hand is dealer: 1 for South, 2 for West, etc.
@@ -95,4 +97,4 @@ def parse(url: str) -> dict:
  
 # for testing          
 if __name__ == '__main__': 
-    print (parse("https://www.bridgebase.com/tools/handviewer.html?lin=st||pn|PSMartin,~Mwest,~Mnorth,~Meast|md|3ST5HAJ7DKQJ2CAJT6,S96432HKQ94DT5C73,SAK7HT32D98CKQ852,SQJ8H865DA7643C94|sv|o|rh||ah|Board%201|mb|1C|an|Minor%20suit%20opening%20--%203+%20!C;%2011-21%20HCP;%2012-22%20total%20points|mb|P|mb|2C!|an|Inverted%20minor%20suit%20raise%20--%204+%20!C;%203-%20!H;%203-%20!S;%2010+%20HCP;%20forcing%20to%202N|mb|P|mb|2S|an|3+%20!C;%2011-21%20HCP;%2012-22%20total%20points;%20stop%20in%20!S;%20forcing|mb|P|mb|3N|an|4+%20!C;%203-%20!H;%203-%20!S;%2014-18%20HCP;%20partial%20stop%20in%20!D;%20partial%20stop%20in%20!H|mb|P|mb|P|mb|P|pc|S3|pc|SA|pc|SQ|pc|S5|pc|D9|pc|D3|pc|DQ|pc|D5|pc|CA|pc|C3|pc|C2|pc|C4|pc|CJ|pc|C7|pc|CK|pc|C9|pc|D8|pc|D7|pc|DK|pc|DT|pc|C6|pc|H9|pc|C8|pc|H5|pc|CQ|pc|H8|pc|CT|pc|S6|pc|C5|pc|D6|pc|D2|pc|S9|pc|H2|pc|H6|pc|HJ|pc|HQ|pc|H4|pc|H3|pc|D4|pc|H7|pc|HA|pc|HK|pc|HT|pc|DA|mc|12|"))
+    print (parse("https://www.bridgebase.com/tools/handviewer.html?bbo=y&lin=st%7C%7Cmd%7C4SAKT92HA4D3CKQJ85%2CSQ83HKJ953DA742C9%2CS6H862DKQJT5CA743%2CSJ754HQT7D986CT62%7Csv%7CN%7Cah%7CBoard%202%7Cmb%7CP%7Cmb%7C1S%7Can%7CMajor%20suit%20opening%20--%205%2B%20%21S%3B%2011-21%20HCP%3B%2012-22%20total%20points%7Cmb%7CP%7Cmb%7C1N%7Can%7CForcing%20one%20notrump%20--%203-%20%21S%3B%206%2B%20HCP%3B%2012-%20total%20points%7Cmb%7CP%7Cmb%7C2C%7Can%7CNew%20suit%20--%203%2B%20%21C%3B%203-%20%21H%3B%205%2B%20%21S%3B%2011%2B%20HCP%3B%2012-18%20total%20points%7Cmb%7CP%7Cmb%7C2N%7Can%7CBalanced%20invite%20--%204-%20%21C%3B%202-%20%21S%3B%2010%2B%20HCP%3B%2012-%20total%20points%7Cmb%7CP%7Cmb%7C3N%7Can%7C3%2B%20%21C%3B%203-%20%21H%3B%205-6%20%21S%3B%2015%2B%20HCP%3B%2018-%20total%20points%3B%20partial%20stop%20in%20%21D%3B%20partial%20stop%20in%20%21H%7Cmb%7CP%7Cmb%7CP%7Cmb%7CP%7Cpc%7CD6%7Cpc%7CD3%7Cpc%7CDA%7Cpc%7CD5%7Cpc%7CH3%7Cpc%7CH2%7Cpc%7CH7%7Cpc%7CHA%7Cmc%7C12%7C"))

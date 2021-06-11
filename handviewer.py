@@ -10,52 +10,56 @@ Git commands:
     git commit -m "some comment"
     git push -u  origin main
 """
-import parseurl
+import argparse
 import buildhtml
 import inputdeal
-import sys
-import re
 import json
+import parseurl
+import re
 
-def main(input: str, options: str, outputfile: str):
-# input is either
-#    the url of a BBO handviewer deal
-#    * to indicate console entry
-#    ** to indicate deal was previously saved in a json file with the same name as the outputfile specification
-# options is a string containing one or more of 'NSEWA' and a number 
-#   NSEW specify the seats to print, A specifies to print the auction, the number indicates how many seats to shift the deal (clockwise) 
-# output file should be previx only - both json and html files will be created
 
-    assert '.' not in outputfile, "Output file name should be prefix only" 
+def main(args):
+    assert '.' not in args.output, "Output file name should be prefix only" 
     
     deal = {}
     
     # build deal
-    if input == '**':
-        saveFile = open(outputfile + ".json", "r")
+    if args.input == '**':
+        saveFile = open(args.output + ".json", "r")
         deal = json.load(saveFile)
         saveFile.close()
     else:
-        saveFile = open(outputfile + ".json", "w")
-        if input == '*':
+        saveFile = open(args.output + ".json", "w")
+        if args.input == '*':
             deal = inputdeal.inputDeal()
             json.dump(deal, saveFile)
-        elif re.match("http", input):
-            deal = parseurl.parse(input)
+        elif re.match("http", args.input):
+            deal = parseurl.parse(args.input)
             json.dump(deal, saveFile)
         saveFile.close()
      
     assert deal, 'Input must be *, **, or start with http'
     
     # build the html
-    html = buildhtml.build(deal, options)
+    html = buildhtml.build(deal, args)
    
     # write it to the specified file
-    f = open(outputfile + ".html", 'w')
+    f = open(args.output + ".html", 'w')
     f.write(html)
     f.close()
     
-    print(f"Html has been written to {outputfile}")
+    print(f"Html has been written to {args.output}")
     
     
-main(*sys.argv[1:])
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description = 'Handviewer Tool', )
+    parser.add_argument('input', help='html string, * for console input, or ** for previous deal ')
+    parser.add_argument('-n', '--north', action='store_true', help='print North hand')
+    parser.add_argument('-e', '--east', action='store_true', help='print East hand')
+    parser.add_argument('-s', '--south', action='store_true', help='print South hand')
+    parser.add_argument('-w', '--west', action='store_true', help='print West hand')
+    parser.add_argument('-a', '--auction', action='store_true', help='print auction')
+    parser.add_argument('-r', '--rotate', type=int, help='number of seats to rotate clockwise')
+    parser.add_argument('-o', '--output', default='output', help='common prefix for json and html output files')
+    
+    main(parser.parse_args())

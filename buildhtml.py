@@ -22,15 +22,16 @@ The build method of this module takes as input a dictionary describing a deal in
     it outputs an html string, displaying the deal in a variety of formats
     as specified by the options string
     
-    the options string must contain at least one of SWNE and may also contain A
+    the options specified must contain at least one of SWNE and may also contain A
     if it contains only one of SWNE, that hand is formatted on a single line
     if it contains more than one of SWNE, all the specified hands are formatted in a diagram
     
     if in contains A, the auction is formatted below the diagram
     
-    if it contains a number, the deal is shifted clockwise that number of positions (and directions are reassigned before formatting)
+    if r is specified, the deal is shifted clockwise that number of positions (and directions are reassigned before formatting)
 """
 from typing import Dict, List
+
 import globals
 import re
 
@@ -197,24 +198,23 @@ def buildAuctionTable(deal: dict, width: int = 300) -> str:
         auction + \
         '</tbody></table>'
  
-def buildHandTable(deal: dict, options: str) -> str:
+def buildHandTable(deal: dict, args) -> str:
     # build html to display deal
-    # options is a string containing a letter for each hand to display (N, S, E, W) and 'A' if the auction is to be displayed
     hands = formatHandDiagrams(deal["Seats"])
     return '<div align="center"><table><tbody>\n' + \
             '   <tr>\n'  + \
             '      <td align="left" width="125"><br /></td>\n' + \
-            '      <td align="left" width="125">' + (hands["North"] if 'N' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["North"] if args.north else '') + '<br /></td>\n' + \
             '      <td align="left" width="125"><br /></td>\n' + \
             '   </tr>\n' + \
             '   <tr>\n'  + \
-            '      <td align="left" width="125">' + (hands["West"] if 'W' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["West"] if args.west else '') + '<br /></td>\n' + \
             '      <td align="left" width="125"><br /></td>\n' + \
-            '      <td align="left" width="125">' + (hands["East"] if 'E' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["East"] if args.east else '') + '<br /></td>\n' + \
             '   </tr>\n' + \
             '   <tr>\n'  + \
             '      <td align="left" width="125"><br /></td>\n' + \
-            '      <td align="left" width="125">' + (hands["South"] if 'S' in options else '') + '<br /></td>\n' + \
+            '      <td align="left" width="125">' + (hands["South"] if args.south else '') + '<br /></td>\n' + \
             '      <td align="left" width="125"><br /></td>\n' + \
             '   </tr>\n' + \
             '</tbody></table></div>\n'
@@ -223,17 +223,16 @@ def buildSingleHand(hand: str) -> str:
     return f'<TABLE width="300" border="0" cellspacing="0" cellpadding="0" align="center"><TR><TD WIDTH="100%" Align="center">{hand}</TR></TABLE>'
         
     
-def build(deal: dict, options: str) -> str:
+def build(deal : dict, args) -> str:
     
     html = ''
     
     # rotate deal if necessary
-    shiftNum = re.findall('[1-3]', options)
-    if len(shiftNum) > 0:
-        rotateDeal(deal, int(shiftNum[0]))
+    if args.rotate:
+        rotateDeal(deal, args.rotate)
     
     # if a single seat is specified, format it as a single line
-    seatsToShow = re.findall('[WNES]', options)
+    seatsToShow = args.north * 'N' + args.east * 'E' + args.south * 'S' + args.west * 'W'
     if len(seatsToShow) == 1:
         for seat in deal['Seats']:
             if seat['Direction'] == globals.seats[seatsToShow[0]]:
@@ -241,10 +240,10 @@ def build(deal: dict, options: str) -> str:
                  break
     
     elif len(seatsToShow) > 1:
-        html = buildHandTable(deal, options)
+        html = buildHandTable(deal, args)
         
     # if specified, add auction
-    if 'A' in options:
+    if args.auction:
         html += buildAuctionTable(deal)
         
     return html
