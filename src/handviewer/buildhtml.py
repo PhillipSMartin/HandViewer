@@ -30,10 +30,10 @@ The build method of this module takes as input a dictionary describing a deal in
     
     if r is specified, the deal is shifted clockwise that number of positions (and directions are reassigned before formatting)
 """
+import globals
+
 from typing import Dict, List
 
-import globals
-import re
 
 globals.initialize()
 pips = { 'S': '&#9824;', 

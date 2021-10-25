@@ -1,4 +1,6 @@
-# HandViewer
+==========
+HandViewer
+==========
 
 handviewer.py will create html to display a bridge hand.
 If you specify * for the first parameter, it will prompt you for input.

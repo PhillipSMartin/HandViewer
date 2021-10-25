@@ -20,9 +20,8 @@ The parse method of this module takes a BBO handviewer url, parses it, and retur
       }
 """
 
-#import sys
-import re
 import globals
+import re
 
 globals.initialize()
     

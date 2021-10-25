@@ -21,6 +21,7 @@ The input method of this module asks for input from the user and returns a dicti
       }
 """
 import globals
+
 from typing import List
 
 globals.initialize()
