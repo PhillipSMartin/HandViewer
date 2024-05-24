@@ -53,7 +53,7 @@ def extractPlayers(url: str) -> list:
     # extract string containing players' names
     # build a list with one item for each player
     # players whose names start with ~ are robots
-    playersMatch = re.findall(".*?\|pn\|(.*?)\|", url)
+    playersMatch = re.findall(".*?[\|=]pn\|(.*?)\|", url)
     assert len(playersMatch) > 0, "No players"
     players = playersMatch[0].split(',')
     for i in range(len(players)):
